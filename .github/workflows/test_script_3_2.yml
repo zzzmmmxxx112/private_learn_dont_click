@@ -32,7 +32,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           # 缓存依赖，加速后续运行
-          cache: 'pip'
+          # cache: 'pip'
 
       # 3. 安装依赖（pytest + python-dateutil）
       - name: Install dependencies
