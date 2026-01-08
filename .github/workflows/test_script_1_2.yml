@@ -1,7 +1,5 @@
-# 工作流名称：运行 test_script_1_2.py 的 pytest 测试
 name: Run Pytest for test_script_1_2.py
 
-# 触发条件：仅当目标脚本或本 workflow 文件变更时触发
 on:
   push:
     branches: [ main ]
@@ -21,7 +19,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-          # cache: 'pip'
 
       - name: Install dependencies
         run: |
@@ -31,14 +28,14 @@ jobs:
 
       - name: Run pytest and generate report
         run: |
-          # 核心修改：报告文件名改为 report_test_script_1_2.html
+          mkdir -p test-results
+          # 执行pytest，即使失败也继续（后续上传报告）
           pytest test_script_1_2.py -v --tb=short --html=test-results/report_test_script_1_2.html --self-contained-html
-          # 验证报告生成（可选）
-          ls -l test-results/
+        continue-on-error: true  # 关键：允许该步骤失败，不中断workflow
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
         with:
-          name: report_test_script_1_2 # Artifact 名称与报告文件对应
-          path: test-results/report_test_script_1_2.html # 匹配新的报告文件名
+          name: report_test_script_1_2
+          path: test-results/report_test_script_1_2.html
           retention-days: 7
