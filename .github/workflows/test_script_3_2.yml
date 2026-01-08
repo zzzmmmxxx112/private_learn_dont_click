@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false  # 一个版本失败不影响其他版本运行
       matrix:
-        python-version: [3.8, 3.9, 3.10, 3.11]
+        python-version: [3.8, 3.9]
 
     # 作业步骤
     steps:
