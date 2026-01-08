@@ -1,0 +1,44 @@
+# 工作流名称：运行 test_script_1_2.py 的 pytest 测试
+name: Run Pytest for test_script_1_2.py
+
+# 触发条件：仅当目标脚本或本 workflow 文件变更时触发
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'test_script_1_2.py', '.github/workflows/test_script_1_2.yml' ]
+  pull_request:
+    branches: [ main ]
+    paths: [ 'test_script_1_2.py', '.github/workflows/test_script_1_2.yml' ]
+
+jobs:
+  pytest-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-html
+          pip list
+
+      - name: Run pytest and generate report
+        run: |
+          # 核心修改：报告文件名改为 report_test_script_1_2.html
+          pytest test_script_1_2.py -v --tb=short --html=test-results/report_test_script_1_2.html --self-contained-html
+          # 验证报告生成（可选）
+          ls -l test-results/
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: report_test_script_1_2 # Artifact 名称与报告文件对应
+          path: test-results/report_test_script_1_2.html # 匹配新的报告文件名
+          retention-days: 7
